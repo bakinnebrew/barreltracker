@@ -1,0 +1,49 @@
+body {
+  background-color: whitesmoke;
+}
+
+form {
+  background-color: white;
+  border-style: solid;
+  border-color: mediumseagreen;
+  padding: 20px;
+}
+
+button {
+  background-color: mediumseagreen;
+  border-radius: 5px;
+  border-style: solid;
+  margin: 5px;
+  box-shadow: 0 2px #999;
+}
+
+button:hover {
+  background-color: seagreen;
+}
+
+#alerts:hover {
+  background-color: grey;
+}
+
+input {
+  background-color: mediumseagreen;
+  border-radius: 5px;
+  border-style: solid;
+  margin: 5px;
+  box-shadow: 0 2px #999;
+}
+
+select {
+  border-radius: 5px;
+  border-style: solid;
+  margin: 5px;
+  box-shadow: 0 2px #999;
+}
+
+a {
+  box-shadow: 0 2px #999;
+}
+
+#add-note-content {
+  width: 75%;
+}

@@ -1,0 +1,151 @@
+   <input type="text" id="barrel-title" placeholder="E.g., Barrel 001">
+                <br>
+                <label for="beer_style">Beer Style:</label>
+                    <select id="beer_style" name="beer_style">
+                        <option value="sour">Sour</option>
+                        <option value="stout_porter">Stout/Porter</option>
+                        <option value="lager">Lager</option>
+                        <option value="belgian">Belgian</option>
+                        <option value="specialty">Specialty</option>
+                    </select>
+                <label for="barrel_category">Barrel Type:</label>
+                    <select id="barrel_category" name="barrel_category">
+                        <option value="red_wine">Red Wine</option>
+                        <option value="white_wine">White Wine</option>
+                        <option value="bourbon">Bourbon</option>
+                        <option value="rum">Rum</option>
+                        <option value="gin">Gin</option>
+                        <option value="whiskey">Whiskey</option>
+                        <option value="other">Other</option>
+                    </select>
+                <label for="start">Fill date:</label>
+                    <input type="date" id="start" name="fill-date"
+                           min="2021-01-01" max="2031-12-31">
+
+^incomplete form 
+
+functions to create:
+
+
+
+functions to fix:
+- clicking back while on Add-barrel kind of messes stuff up. I might end up getting rid of that form.as_p
+
+features to add
+1.Add pictures of barrel
+2. 
+
+Error Checking>
+
+
+features to develop
+DONE**1. email feature
+***2. edit features - barrel
+*3. algorithm for projected flavors?
+DONE**5. automatically increment barrel amountwhen adding a barrel (fix button)
+DONE**6. better filtering options (barrel count at the top) - 
+***7. create URL structure\
+DONE8. Fixed undefined button on account for bookmark barrels. There was a scoping issue. 
+
+
+
+
+INDEX.html
+ <div id="new-barrel-page">
+            <h1>New Barrel</h1>
+            <form id="new-barrel-form" action = "{% url 'tracker:add_barrel' %}" method = "POST" enctype="multipart/form-data"> 
+                {% csrf_token %} 
+                {{ form.as_p }} 
+                <input type="submit" value=Add> 
+            </form> 
+        </div>
+
+VIEWS.PY
+def add_barrel(request):
+    # adding a new barrel must be via POST
+    if request.method == 'POST':
+        user = User.objects.get(username=request.user)
+        form = AddNewBarrel(request.POST, request.FILES)
+        if form.is_valid():
+            new_barrel = form.save(commit=False)
+            new_barrel.owner = user
+            new_barrel.add_date = datetime.now()
+            new_barrel.archived = False
+            new_barrel.save()
+        return redirect('index')
+    else:
+        return render(request, "tracker/index.html", {
+            "form": AddNewBarrel()
+        })
+
+
+
+
+
+
+
+
+        {% extends "tracker/layout.html" %}
+{% load static %}
+
+    {% block body %}
+    
+    <button class= "btn btn-sm btn-outline-primary" id="account"> Account </button>
+    <button class= "btn btn-sm btn-outline-primary" id="homepage"> Home </button>
+    <button class= "btn btn-sm btn-outline-primary" id="archived"> Archived </button>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'tracker:logout' %}">Log Out</a>
+    <hr>
+   
+    
+    
+        <div id="homepage-view">
+            <h1>Home</h1>
+                <a class= "btn btn-primary" id="new-barrel" href="{% url 'tracker:add_barrel' %}"> Add Barrel </a>
+                <div id="barrels_error"></div>
+        </div>
+
+        <div id="archive-view">
+            <h1>Archives</h1>
+        </div>
+
+        <div id="single-barrel-view">
+            <h1 id="barrel-title"></h1>
+        </div>
+
+        <div id="account-view">
+            <h1 id="account-name"></h1>
+        </div>
+
+    {% endblock %}
+
+{% block script %}
+    <script src="{% static 'tracker/functions.js' %}"></script>
+{% endblock %}
+
+
+ADD form field  link
+<a class="btn btn-sm btn-outline-secondary" id="new-barrel" href="{% url 'tracker:add_barrel' %}"> Add Barrel </a>
+
+ADD.html
+{% extends "tracker/layout.html" %}
+{% load static %}
+
+
+{% block body %}
+<h1>New Barrel</h1>
+<a style="margin-bottom: 10px;" class= "btn btn-sm btn-outline-secondary" id="homepage" href="{% url 'tracker:index' %}"> Home </a>
+        <form id="new-barrel-form" action = "{% url 'tracker:add_barrel' %}" method = "POST" enctype="multipart/form-data"> 
+            {% csrf_token %}
+            Number of barrels added: {{ barrel_count }}
+            {{ form.as_p }} 
+            <input type="submit" value=Add> 
+        </form> 
+{% endblock %}
+
+{% extends "tracker/layout.html" %}
+{% load static %}
+
+
+
+
+
