@@ -32,10 +32,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if(counter > 0){
           document.getElementById("alerts").style.backgroundColor= "red"
         } 
-        // else{
-        //   document.getElementById("alerts").style.backgroundColor= "whitesmoke"
-        // }
       }) 
+      .catch(error => {
+        console.log('Error:', error)
+      });
     
     build_barrels('home')
   });
@@ -96,7 +96,7 @@ function filter_barrels(){
     document.querySelector('#barrels-view').append(no_barrel_error)
     });
 }
-
+//function that generates an empty edit barrel page, allows user to fill in data, and send that to submit_barrel function
 function add_barrel(){
 
   document.querySelector('#edit-barrel-view').style.display = 'block';
@@ -119,6 +119,9 @@ function add_barrel(){
     .then(account => {
       const barrel_count_total = account.barrel_count + 1;
       document.querySelector('#edit-barrel-title').value = "Barrel " + barrel_count_total;
+    })
+    .catch(error => {
+      console.log('Error:', error)
     });
 
   document.querySelector('#edit-barrel-title').value = '';
@@ -131,6 +134,7 @@ function add_barrel(){
 
 };
 
+//submits barrel data to the database
 function submit_barrel(){
   document.querySelector('#edit-barrel-view').style.display = 'block';
   document.querySelector('#submit-barrel-button').style.display= 'block';
@@ -166,7 +170,9 @@ function submit_barrel(){
   // .then( () => {
   //   alert("You've added a barrel to the database.")
   // })
-
+  .catch(error => {
+    console.log('Error:', error)
+  })
   .then( () => {
     build_barrels('home');
   })
@@ -233,6 +239,9 @@ function load_account(){
       document.querySelector('#account-view').append(account_owner_barrel_count);
       document.querySelector('#account-view').append(account_bookmarked_barrel_button);
       document.querySelector('#account-view').append(account_edit_button);
+    })
+    .catch(error => {
+      console.log('Error:', error)
     });
 }
 //loads alerts for barrels needing to be pulled within 7 days
@@ -277,16 +286,29 @@ function load_alerts(){
       document.querySelector('#alerts-view').append(line_break_mark);
     })
     
+  })
+  .catch(error => {
+    console.log('Error:', error)
   });
-  document.getElementById("alerts").style.backgroundColor= "whitesmoke"
+  document.getElementById("alerts").onmouseover = function() {mouseOver()};
+  document.getElementById("alerts").onmouseout = function() {mouseOut()};
+
+  function mouseOver() {
+    document.getElementById("alerts").style.backgroundColor = "grey";
+  }
+
+  function mouseOut() {
+    document.getElementById("alerts").style.backgroundColor = "whitesmoke";
+  }
   fetch(`/read_alerts`, {
     method: 'PUT',
     body: JSON.stringify({
       alert_read: true
     })
   })
-  .then( () => {
-    console.log("done")
+
+  .catch(error => {
+    console.log('Error:', error)
   });
 
 };
@@ -479,11 +501,16 @@ function single_barrel_load(id){
         else{
           document.querySelector('#single-barrel-view').append(barrel_start_alerts_button)
         }
-        //when we go back to single barrel load, it runs this twice, adding more notes than necessary
-        load_notes(barrel_id)
-        })
-  }
+      })
+      .then(() => {
+        load_notes(id)
+      }) 
+      .catch(error => {
+        console.log('Error:', error)
+      })
+    }
 
+  //function that allows for barrel to be edited
   function edit_barrel(id){
 
     document.querySelector('#edit-barrel-view').style.display = 'block';
@@ -524,10 +551,14 @@ function single_barrel_load(id){
         document.querySelector('#edit-barrel-description').value=description;
 
         document.querySelector('#save-changes-button').addEventListener('click', () => submit_changes_to_barrel(barrel_id))
+      })
+      .catch(error => {
+        console.log('Error:', error)
       });
     
   }
 
+  //function that submits changes to barrel to the database
   function submit_changes_to_barrel(id){
 
         const title = document.querySelector('#edit-barrel-title').value;
@@ -556,13 +587,16 @@ function single_barrel_load(id){
         .then ( () => {
           single_barrel_load(id)
         })
+        .catch(error => {
+          console.log('Error:', error)
+        });
   }
   function load_notes(id){
 
-        const barrel_note_header = document.createElement('h3')
-        barrel_note_header.innerHTML = "Notes"
-        document.querySelector('#single-barrel-view').append(barrel_note_header);
-        // document.querySelector('#note-load').innerHTML = `<h3>Notes</h3>`;
+        // const barrel_note_header = document.createElement('h3')
+        // barrel_note_header.innerHTML = "Notes"
+        // document.querySelector('#single-barrel-view').append(barrel_note_header);
+        // // document.querySelector('#note-load').innerHTML = `<h3>Notes</h3>`;
 
     fetch(`/load_notes/${id}`)
       .then(response => response.json())
@@ -586,6 +620,9 @@ function single_barrel_load(id){
 
         });
         
+      })
+      .catch(error => {
+        console.log('Error:', error)
       });
   };
 
@@ -667,6 +704,9 @@ function archive_barrel(id){
       archived: true
     })
   })
+  .catch(error => {
+    console.log('Error:', error)
+  })
   //return back to Homepage
   .then( () => {
     build_barrels('home')
@@ -682,6 +722,9 @@ function unarchive_barrel(id){
     body: JSON.stringify({
       archived: false
     })
+  })
+  .catch(error => {
+    console.log('Error:', error)
   })
   //return back to Homepage
   .then( () => {
@@ -702,6 +745,9 @@ function delete_barrel(id){
     .then( () => {
       alert("This barrel has been deleted")
     })
+    .catch(error => {
+      console.log('Error:', error)
+    })
     //return back to Homepage
     .then( () => {
       build_barrels('home')
@@ -719,6 +765,9 @@ function bookmark_barrel(id){
       bookmarked: true
   })
 })
+.catch(error => {
+  console.log('Error:', error)
+})
 //return back to Homepage
 .then( () => {
     build_barrels('home')
@@ -734,6 +783,9 @@ function unbookmark_barrel(id){
     body: JSON.stringify({
       bookmarked: false
   })
+  .catch(error => {
+    console.log('Error:', error)
+  })
 })
 //return back to Homepage
 .then( () => {
@@ -748,6 +800,9 @@ function start_alerts(id){
     method: 'PUT',
     body: JSON.stringify({
       alert_off: false
+    })
+    .catch(error => {
+      console.log('Error:', error)
     })
   })
 .then( () => {
@@ -766,6 +821,9 @@ function stop_alerts(id){
     method: 'PUT',
     body: JSON.stringify({
       alert_off: true
+    })
+    .catch(error => {
+      console.log('Error:', error)
     })
   })
 .then( () => {
@@ -788,7 +846,10 @@ function remove_alert(id){
     .then( () => {
       alert("This alert has been removed")
     })
-    //return back to Homepage
+    .catch(error => {
+      console.log('Error:', error)
+    })
+    //return back to Alerts page
     .then( () => {
       load_alerts()
     })

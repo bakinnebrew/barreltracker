@@ -358,7 +358,8 @@ def filter(request, filter_params, filter_params2, filter_params3):
         if filter_params == 'All':
             barrels = Barrel.objects.filter(owner=request.user)
         else:
-            barrels = Barrel.objects.filter(beer_style=filter_params)
+            barrels = Barrel.objects.filter(
+                beer_style=filter_params, owner=request.user)
 
         if filter_params2 == 'Both':
             results = barrels.all()
